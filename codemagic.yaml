@@ -1,0 +1,91 @@
+# Quiet Prayers: cloud builds on Codemagic (https://codemagic.io)
+# The web app lives in ./www (copied from ../quiet_prayers_app with `npm run web` before each commit).
+#
+# Workflows:
+#   android-test    -> debug APK you can install on any Android phone to try the app
+#   android-release -> signed .aab for Google Play (needs the "quiet_prayers_keystore" signing
+#                      identity in Codemagic: Teams > Code signing identities > Android keystores)
+#   ios-release     -> App Store build (only after buying Apple Developer; needs App Store Connect
+#                      API key in Codemagic: Teams > Code signing identities > iOS)
+
+workflows:
+  android-test:
+    name: Android test APK
+    instance_type: linux_x2
+    max_build_duration: 30
+    environment:
+      node: 22
+      java: 21
+    scripts:
+      - name: Install npm packages
+        script: npm ci
+      - name: Sync Capacitor (www -> android)
+        script: npx cap sync android
+      - name: Build debug APK
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+
+  android-release:
+    name: Android release (Google Play .aab)
+    instance_type: linux_x2
+    max_build_duration: 30
+    environment:
+      android_signing:
+        - quiet_prayers_keystore
+      node: 22
+      java: 21
+      vars:
+        PACKAGE_NAME: "com.quietprayers.daily"
+    scripts:
+      - name: Install npm packages
+        script: npm ci
+      - name: Sync Capacitor (www -> android)
+        script: npx cap sync android
+      - name: Build signed bundle
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+      - android/app/build/outputs/**/mapping.txt
+    # Optional later: automatic upload to Play Console internal testing
+    # publishing:
+    #   google_play:
+    #     credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+    #     track: internal
+
+  ios-release:
+    name: iOS App Store build
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: quiet_prayers_asc   # name of the App Store Connect API key in Codemagic
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.quietprayers.daily
+      node: 22
+      xcode: latest
+    scripts:
+      - name: Install npm packages
+        script: npm ci
+      - name: Sync Capacitor (www -> ios)
+        script: npx cap sync ios
+      - name: Set up code signing
+        script: xcode-project use-profiles
+      - name: Build ipa
+        script: |
+          xcode-project build-ipa \
+            --workspace "ios/App/App.xcworkspace" \
+            --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiet Prayers</title>
+<meta name="description" content="One prayer at a time. Morning, noon, evening, and for the ones you love.">
+<meta name="theme-color" content="#0f1a2b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="theme.css">
+<style>
+:root{
+  --bg:#0f1a2b; --bg2:#16243b; --ink:#f4ecd8; --muted:#a9b2c3; --accent:#e8c27a; --line:#2a3b57;
+  --fs:1.45rem;
+}
+:root[data-theme="light"]{
+  --bg:#fbf6ea; --bg2:#f1e9d4; --ink:#1e2a3d; --muted:#5d6a80; --accent:#9a6a1c; --line:#d9ccaa;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif}
+header{position:fixed;top:0;left:0;right:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:env(safe-area-inset-top) 12px 0}
+.top{display:flex;align-items:center;justify-content:space-between;height:48px}
+.brand{font-size:1.05rem;letter-spacing:.04em;color:var(--accent)}
+.iconbtn{background:none;border:0;color:var(--ink);font-size:1.35rem;padding:8px 10px;min-width:44px;min-height:44px;cursor:pointer}
+nav{display:flex;gap:8px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit;font-size:.95rem;padding:9px 14px;border-radius:999px;min-height:44px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--accent);color:#1b1405;border-color:var(--accent);font-weight:bold}
+main{position:fixed;inset:0;padding-top:calc(116px + env(safe-area-inset-top));overflow-y:scroll;scroll-snap-type:y mandatory;scroll-padding-top:calc(116px + env(safe-area-inset-top));-webkit-overflow-scrolling:touch}
+.card{scroll-snap-align:start;min-height:calc(100dvh - 116px - env(safe-area-inset-top));display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-align:center;padding:24px 28px 96px;position:relative}
+.tag{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 18px}
+.title{font-size:1.1rem;color:var(--accent);margin:0 0 14px}
+.text{font-size:var(--fs);line-height:1.6;max-width:34rem;margin:0}
+.ref{margin-top:20px;font-size:.95rem;color:var(--muted)}
+.verse{margin:24px 0 auto;max-width:32rem;font-style:italic;color:var(--muted);font-size:calc(var(--fs) * .72);line-height:1.5}
+.actions{position:absolute;right:12px;bottom:22px;display:flex;flex-direction:column;gap:6px}
+.actions button{background:var(--bg2);border:1px solid var(--line);color:var(--ink);width:52px;height:52px;border-radius:50%;font-size:1.25rem;cursor:pointer}
+.actions button.on{color:#e0556b;border-color:#e0556b}
+.hint{position:absolute;bottom:20px;left:0;right:70px;text-align:center;font-size:.8rem;color:var(--muted)}
+.empty{padding:40px;text-align:center;color:var(--muted);font-size:1.1rem}
+.sheet{position:fixed;inset:0;z-index:10;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center}
+.sheet.open{display:flex}
+.panel{width:100%;max-width:30rem;background:var(--bg);border-top:1px solid var(--line);border-radius:18px 18px 0 0;padding:20px 22px calc(26px + env(safe-area-inset-bottom))}
+.panel h2{margin:0 0 14px;font-size:1.2rem;color:var(--accent)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);gap:12px}
+.row:last-of-type{border-bottom:0}
+.seg button{border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit;padding:9px 14px;min-height:44px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#1b1405}
+.seg button:first-child{border-radius:10px 0 0 10px}.seg button:last-child{border-radius:0 10px 10px 0}
+.small{font-size:.8rem;color:var(--muted);line-height:1.5;margin-top:14px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--accent);color:#1b1405;padding:10px 16px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:no-preference){.card{animation:fade .5s ease both}@keyframes fade{from{opacity:.0}to{opacity:1}}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <span class="brand">Quiet Prayers</span>
+    <span>
+      <span id="streak" class="small" style="margin:0 6px"></span>
+      <button class="iconbtn" id="openSettings" aria-label="Settings">⚙</button>
+    </span>
+  </div>
+  <nav id="tabs" role="tablist" aria-label="Prayer categories"></nav>
+</header>
+<main id="feed" tabindex="0" aria-live="polite"></main>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Settings">
+  <div class="panel">
+    <h2>Settings</h2>
+    <div class="row"><span>Text size</span>
+      <span class="seg" id="sizeSeg"><button data-s="1.2">A</button><button data-s="1.45">A+</button><button data-s="1.8">A++</button></span></div>
+    <div class="row"><span>Theme</span>
+      <span class="seg" id="themeSeg"><button data-t="dark">Night</button><button data-t="light">Day</button></span></div>
+    <p class="small">Scripture quotations are from the King James Version (public domain). Prayers are original. Praying hands icon: Material Design Icons by Pictogrammers (Apache 2.0). These are words of comfort, not medical or professional advice.</p>
+    <div class="row"><span></span><button class="iconbtn" id="closeSettings" style="font-size:1rem;border:1px solid var(--line);border-radius:10px">Close</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- DATA ---------- */
+const V = {
+  morning1:{ref:"Psalm 5:3",t:"My voice shalt thou hear in the morning, O LORD; in the morning will I direct my prayer unto thee, and will look up."},
+  mercies:{ref:"Lamentations 3:22-23",t:"It is of the LORD'S mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness."},
+  day:{ref:"Psalm 118:24",t:"This is the day which the LORD hath made; we will rejoice and be glad in it."},
+  hills:{ref:"Psalm 121:1-2",t:"I will lift up mine eyes unto the hills, from whence cometh my help. My help cometh from the LORD, which made heaven and earth."},
+  bread:{ref:"Matthew 6:11",t:"Give us this day our daily bread."},
+  wait:{ref:"Isaiah 40:31",t:"But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint."},
+  trust:{ref:"Proverbs 3:5-6",t:"Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths."},
+  sleep:{ref:"Psalm 4:8",t:"I will both lay me down in peace, and sleep: for thou, LORD, only makest me dwell in safety."},
+  secret:{ref:"Psalm 91:1",t:"He that dwelleth in the secret place of the most High shall abide under the shadow of the Almighty."},
+  shepherd:{ref:"Psalm 23:1-2",t:"The LORD is my shepherd; I shall not want. He maketh me to lie down in green pastures: he leadeth me beside the still waters."},
+  broken:{ref:"Psalm 34:18",t:"The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit."},
+  rest:{ref:"Matthew 11:28",t:"Come unto me, all ye that labour and are heavy laden, and I will give you rest."},
+  fear:{ref:"Isaiah 41:10",t:"Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness."},
+  careful:{ref:"Philippians 4:6",t:"Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God."},
+  still:{ref:"Psalm 46:10",t:"Be still, and know that I am God."},
+  train:{ref:"Proverbs 22:6",t:"Train up a child in the way he should go: and when he is old, he will not depart from it."},
+  heritage:{ref:"Psalm 127:3",t:"Lo, children are an heritage of the LORD: and the fruit of the womb is his reward."},
+  bless:{ref:"Numbers 6:24-26",t:"The LORD bless thee, and keep thee: The LORD make his face shine upon thee, and be gracious unto thee: The LORD lift up his countenance upon thee, and give thee peace."},
+  beast:{ref:"Proverbs 12:10",t:"A righteous man regardeth the life of his beast."},
+  preserve:{ref:"Psalm 36:6",t:"...O LORD, thou preservest man and beast."},
+  tears:{ref:"Revelation 21:4",t:"And God shall wipe away all tears from their eyes."},
+  joy:{ref:"Psalm 30:5",t:"...weeping may endure for a night, but joy cometh in the morning."},
+  thanks:{ref:"1 Thessalonians 5:18",t:"In every thing give thanks: for this is the will of God in Christ Jesus concerning you."},
+  good:{ref:"Psalm 107:1",t:"O give thanks unto the LORD, for he is good: for his mercy endureth for ever."},
+  peace:{ref:"John 14:27",t:"Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid."},
+  burden:{ref:"Psalm 55:22",t:"Cast thy burden upon the LORD, and he shall sustain thee."},
+  strong:{ref:"Joshua 1:9",t:"...Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest."},
+  heal:{ref:"Psalm 147:3",t:"He healeth the broken in heart, and bindeth up their wounds."},
+  days:{ref:"Psalm 90:12",t:"So teach us to number our days, that we may apply our hearts unto wisdom."}
+};
+const P = [
+ // morning
+ {c:"morning",ti:"Before the day begins",x:"Lord, I am awake, and You are already here. Before the phone, before the news, before the list of things to do, I want to start with You. Walk with me through this day, and let me notice the small good things You put in my path.",v:"mercies"},
+ {c:"morning",ti:"For the first hour",x:"Father, give me a quiet heart this morning. Take the worry I carried out of last night's sleep and set it in Your hands. Whatever comes today, let me meet it with patience, and with kindness toward the people I meet.",v:"day"},
+ {c:"morning",ti:"For strength",x:"God, some mornings the day feels heavier than I am. I do not need to carry all of it at once. Give me strength for the next hour, and then the one after that. That is enough.",v:"wait"},
+ {c:"morning",ti:"For direction",x:"Lord, I do not know what this day will ask of me. Guide my words, my steps and my choices. If I take a wrong turn, gently bring me back. I trust You with the road ahead.",v:"trust"},
+ // noon
+ {c:"noon",ti:"A pause at midday",x:"Lord, the day is half gone and I have barely stopped. I stop now. Slow my breathing. Remind me that I am not the one holding the world together. Thank You for what has gone right, and forgive me for what I rushed.",v:"still"},
+ {c:"noon",ti:"For daily bread",x:"Thank You, Father, for this meal, for the hands that prepared it, and for everyone who does not have enough today. Bless this food, and make me generous with what I have.",v:"bread"},
+ {c:"noon",ti:"When the day is hard",x:"God, this afternoon is difficult. I am tired, and I am tempted to give up. Give me one more ounce of patience and one more good breath. Be near to me in the middle of this.",v:"burden"},
+ {c:"noon",ti:"Help from above",x:"Lord, I lift my eyes from the screen, the work, and the noise. My help does not come from my own effort. Steady my hands and clear my mind for the rest of the day.",v:"hills"},
+ // evening
+ {c:"evening",ti:"At the end of the day",x:"Lord, the day is done. I did some things well and others poorly, and I give it all back to You. Forgive what I got wrong. Thank You for what I got right. I am setting down what is left of today.",v:"good"},
+ {c:"evening",ti:"For a restful night",x:"Father, as I lie down, quiet my mind. Whatever is still circling in my head, I leave with You. Watch over this house and everyone in it. Let me wake rested and ready.",v:"sleep"},
+ {c:"evening",ti:"For the sleepless",x:"God, it is late and I cannot sleep. You never sleep, so I will not be alone. Keep me company in the dark. Slow my thoughts, and give me peace, even if sleep is slow in coming.",v:"peace"},
+ {c:"evening",ti:"Under Your shelter",x:"Lord, I rest tonight under Your care. Protect those I love who are far away, and those who are sick or alone tonight. Let Your peace be over every home that is trying to sleep.",v:"secret"},
+ // child
+ {c:"family",ti:"For my child",x:"Father, You gave me this child, and You love them even more than I do. Keep them safe today. Guard their heart. Give them courage when they are afraid, and a friend when they feel alone. Help me be patient, present and wise.",v:"heritage"},
+ {c:"family",ti:"For a child who is far away",x:"Lord, my child is not under my roof tonight, and I cannot reach them the way I want to. You can. Be near to them. Bring them home safe in every way that matters, and let them feel that they are loved.",v:"bless"},
+ {c:"family",ti:"For a grandchild",x:"God, thank You for the gift of this grandchild. Let me be a quiet source of love in their life. Give me time to listen, and the right words, and the humility to let them teach me too.",v:"train"},
+ {c:"family",ti:"For my spouse",x:"Lord, bless the one beside me. Where we have grown tired or distant, bring us back together. Make our home a place of peace. Teach us to forgive quickly and to say thank you often.",v:"bless"},
+ {c:"family",ti:"For my dog",x:"Father, thank You for the dog at my feet. For the way they wait for me, forgive me, and are glad every time I come home. Keep them healthy and free from pain. Let me not take a single day with them for granted.",v:"beast"},
+ {c:"family",ti:"For an old dog",x:"Lord, my old friend is slowing down. Their steps are shorter and their sleep is deeper. Give them comfort in these years. Give me patience and tenderness, and the wisdom to know what is best for them.",v:"preserve"},
+ {c:"family",ti:"When a pet is sick",x:"God, the one I love cannot tell me where it hurts. Guide the people caring for them. Give me clear judgment and a gentle heart. Whatever happens, let them feel safe in my arms.",v:"preserve"},
+ {c:"family",ti:"For a family at odds",x:"Lord, there are people in my family I have not spoken to in too long. Soften what is hard in me, and in them. Show me the first small step toward each other, and give me the courage to take it.",v:"peace"},
+ // grief
+ {c:"grief",ti:"When you miss someone",x:"Lord, I miss them today, and I will not pretend I don't. Thank You for the years we had. Hold the love that has nowhere to go. Let the memories be a comfort, not only a wound.",v:"broken"},
+ {c:"grief",ti:"For a quiet house",x:"God, the house is so quiet. I keep listening for a footstep, a voice, a bark. Be here with me in the quiet. Teach me how to live in this new silence without being swallowed by it.",v:"tears"},
+ {c:"grief",ti:"On a hard anniversary",x:"Father, this day carries so much. I am not asking You to make it easy. I am asking You to stay with me through it. Remind me that love does not end, even when everything else changes.",v:"joy"},
+ {c:"grief",ti:"After losing a pet",x:"Lord, thank You for the faithful friend I had. They gave me love without conditions. I am grieving, and that grief is a measure of how much I loved. Comfort me, and let me remember them with a smile.",v:"heal"},
+ // peace / strength / gratitude
+ {c:"peace",ti:"For anxious days",x:"Lord, my mind is racing and I cannot catch it. I name what is worrying me, and I hand it to You. I do not need to solve everything tonight. Give me peace that makes no sense on paper.",v:"careful"},
+ {c:"peace",ti:"For courage",x:"God, I am afraid of what is coming. Remind me that I am not walking alone. Give me enough courage for the next step. I do not need to see the whole path.",v:"fear"},
+ {c:"peace",ti:"For the weary",x:"Father, I am tired in a way sleep does not fix. I come to You as I am. Give me rest for my body, my mind and my soul, and teach me to ask for help.",v:"rest"},
+ {c:"peace",ti:"For health",x:"Lord, I pray for healing for myself and for those I love who are unwell. Strengthen the doctors, the nurses and the caregivers. Give us patience for the slow days and gratitude for the good ones.",v:"heal"},
+ {c:"peace",ti:"For the lonely",x:"God, there are people tonight who have no one to call. I am one of them, or I know one of them. Be near. Bring a kind word, a visit or a letter into a lonely life, and let me be that kindness for someone else.",v:"shepherd"},
+ {c:"peace",ti:"A prayer of thanks",x:"Thank You, Lord, for another day, for the roof, the food, the people who love me and the ones who put up with me. Make my gratitude greater than my complaining.",v:"thanks"},
+ {c:"peace",ti:"For the years I have left",x:"Lord, I am not as young as I was, and I do not want to waste what I have left. Teach me to number my days and to spend them on what matters: love, forgiveness and being useful to someone.",v:"days"},
+ {c:"peace",ti:"In an uncertain world",x:"Father, the news is heavy and the world feels unsteady. I pray for peace where there is war, and for comfort where there is fear. Keep my heart from hardening, and use me, however small, as a source of calm.",v:"strong"}
+];
+const TABS = [
+ {id:"today",label:"Today"},
+ {id:"morning",label:"Morning"},
+ {id:"noon",label:"Noon"},
+ {id:"evening",label:"Evening"},
+ {id:"family",label:"Family & pets"},
+ {id:"grief",label:"Grief"},
+ {id:"peace",label:"Peace"},
+ {id:"saved",label:"♡ Saved"}
+];
+const TAGNAME = {morning:"Morning",noon:"Noon",evening:"Evening",family:"Family & pets",grief:"Grief",peace:"Peace"};
+
+/* ---------- STORAGE (safe) ---------- */
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let saved = new Set(store.get("saved",[]));
+let tab = "today";
+const idOf = (p)=>P.indexOf(p);
+
+/* ---------- RENDER ---------- */
+const feed = document.getElementById("feed");
+const tabsEl = document.getElementById("tabs");
+
+function timeOfDay(){const h=new Date().getHours();return h<11?"morning":h<16?"noon":"evening";}
+function list(){
+  if(tab==="saved") return P.filter(p=>saved.has(idOf(p)));
+  if(tab==="today"){
+    const d = new Date(); const seed = d.getFullYear()*400 + d.getMonth()*31 + d.getDate();
+    const first = P.filter(p=>p.c===timeOfDay());
+    const lead = first[seed % first.length];
+    const rest = P.filter(p=>p!==lead);
+    // deterministic shuffle by date
+    rest.sort((a,b)=> ((idOf(a)*7919 + seed) % 101) - ((idOf(b)*7919 + seed) % 101));
+    return [lead,...rest];
+  }
+  return P.filter(p=>p.c===tab);
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function render(){
+  const items = list();
+  if(!items.length){
+    feed.innerHTML = '<div class="empty">Nothing saved yet.<br>Tap ♡ on a prayer to keep it here.</div>';
+    return;
+  }
+  feed.innerHTML = items.map((p,i)=>{
+    const v=V[p.v], id=idOf(p), on=saved.has(id);
+    return `<section class="card" data-id="${id}">
+      <div class="tag">${TAGNAME[p.c]}${tab==="today"&&i===0?" · for this "+timeOfDay():""}</div>
+      <h2 class="title">${esc(p.ti)}</h2>
+      <p class="text">${esc(p.x)}</p>
+      <p class="verse">“${esc(v.t)}”<br><span class="ref">${esc(v.ref)} (KJV)</span></p>
+      <div class="actions">
+        <button class="${on?"on":""}" data-act="save" aria-label="${on?"Remove from saved":"Save"}">${on?"♥":"♡"}</button>
+        <button data-act="share" aria-label="Share">↗</button>
+        <button data-act="copy" aria-label="Copy">⧉</button>
+      </div>
+      ${i===0?'<div class="hint">Scroll for the next prayer ↓</div>':""}
+    </section>`;
+  }).join("");
+  feed.scrollTop = 0;
+}
+function renderTabs(){
+  tabsEl.innerHTML = TABS.map(t=>`<button role="tab" aria-selected="${t.id===tab}" data-tab="${t.id}">${t.label}</button>`).join("");
+}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600)}
+function payload(id){const p=P[id],v=V[p.v];return `${p.ti}\n\n${p.x}\n\n“${v.t}” — ${v.ref} (KJV)`}
+
+tabsEl.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;tab=b.dataset.tab;renderTabs();render()});
+feed.addEventListener("click",async e=>{
+  const b=e.target.closest("button[data-act]");if(!b)return;
+  const id=+b.closest(".card").dataset.id, act=b.dataset.act;
+  if(act==="save"){
+    saved.has(id)?saved.delete(id):saved.add(id); store.set("saved",[...saved]);
+    if(tab==="saved"){render()}else{b.classList.toggle("on");b.textContent=saved.has(id)?"♥":"♡"}
+    toast(saved.has(id)?"Saved":"Removed");
+  }else if(act==="copy"){
+    try{await navigator.clipboard.writeText(payload(id));toast("Copied")}catch(_){toast("Could not copy")}
+  }else if(act==="share"){
+    const text=payload(id);
+    if(navigator.share){try{await navigator.share({title:"Quiet Prayers",text})}catch(_){}}
+    else{try{await navigator.clipboard.writeText(text);toast("Copied to share")}catch(_){toast("Sharing not available")}}
+  }
+});
+
+/* ---------- SETTINGS ---------- */
+const root=document.documentElement, sheet=document.getElementById("sheet");
+function applySettings(){
+  const s=store.get("size",1.45), t=store.get("theme","dark");
+  root.style.setProperty("--fs",s+"rem"); root.dataset.theme=t;
+  document.querySelectorAll("#sizeSeg button").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.s===s)));
+  document.querySelectorAll("#themeSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.t===t)));
+  const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content=t==="light"?"#fbf6ea":"#0f1a2b";
+}
+document.getElementById("openSettings").onclick=()=>sheet.classList.add("open");
+document.getElementById("closeSettings").onclick=()=>sheet.classList.remove("open");
+sheet.addEventListener("click",e=>{if(e.target===sheet)sheet.classList.remove("open")});
+document.getElementById("sizeSeg").onclick=e=>{const b=e.target.closest("button");if(b){store.set("size",+b.dataset.s);applySettings()}};
+document.getElementById("themeSeg").onclick=e=>{const b=e.target.closest("button");if(b){store.set("theme",b.dataset.t);applySettings()}};
+
+/* ---------- STREAK ---------- */
+(function streak(){
+  const today=new Date().toISOString().slice(0,10);
+  let s=store.get("streak",{last:"",n:0});
+  if(s.last!==today){
+    const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+    s={last:today,n:s.last===y?s.n+1:1}; store.set("streak",s);
+  }
+  document.getElementById("streak").textContent = s.n>1 ? `Day ${s.n}` : "";
+})();
+
+applySettings(); renderTabs(); render();
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+</script>
+<script src="personal.js"></script>
+<script src="people_music.js"></script>
+<script src="prayers_more.js"></script>
+<script src="prayers_lovable.js"></script>
+<script src="prayers_365a.js"></script>
+<script src="prayers_365b.js"></script>
+<script src="prayers_365c.js"></script>
+<script src="prayers_365d.js"></script>
+<script src="share_card.js"></script>
+<script src="nav_buttons.js"></script>
+<script src="quiet_mode.js"></script>
+<script src="native_bridge.js"></script>
+</body>
+</html>

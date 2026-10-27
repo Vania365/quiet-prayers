@@ -1,0 +1,21 @@
+{
+  "appId": "com.quietprayers.daily",
+  "appName": "Quiet Prayers",
+  "webDir": "www",
+  "backgroundColor": "#0b1424",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "launchAutoHide": true,
+      "backgroundColor": "#0b1424",
+      "showSpinner": false
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#E8C27A"
+    }
+  }
+}

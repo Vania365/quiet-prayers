@@ -1,0 +1,46 @@
+/* Quiet Prayers: "card" look (matches the share picture): navy gradient, thin gold frame, big serif text. */
+:root{--page:linear-gradient(180deg,#14223a 0%,#0b1424 100%)}
+:root[data-theme="light"]{--page:linear-gradient(180deg,#fbf6ea 0%,#f1e9d4 100%)}
+html,body{background:var(--page) !important;background-attachment:fixed}
+
+header{background:rgba(11,20,36,.93);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid rgba(232,194,122,.18)}
+:root[data-theme="light"] header{background:rgba(251,246,234,.94);border-bottom-color:rgba(154,106,28,.2)}
+
+.card{width:100%;max-width:680px;margin-left:auto;margin-right:auto;padding:38px 36px 128px;background:transparent}
+.card::before{content:"";position:absolute;inset:14px;border:1.5px solid rgba(232,194,122,.38);border-radius:3px;pointer-events:none}
+:root[data-theme="light"] .card::before{border-color:rgba(154,106,28,.38)}
+
+.card .mark{width:54px;height:54px;margin:auto 0 16px}
+.card .tag{letter-spacing:.2em;margin-bottom:16px}
+.card .title{font-weight:bold;font-size:1.3rem;margin:0 0 18px}
+.card .text{line-height:1.55;font-size:var(--fs)}
+.card .verse{margin-top:30px}
+
+.foot{position:static;order:20;margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none}
+.foot b{color:var(--accent);font-size:1.1rem;letter-spacing:.02em}
+.foot span{color:var(--muted);font-size:.82rem}
+.card .hint{bottom:92px;right:0;left:0}
+
+/* Bottom controls (actions, Previous/Next, footer) sit in normal flow after the verse,
+   so on short screens (e.g. 360x800) they can never overlap the text; the verse's auto
+   margin pushes them to the bottom when there is room. */
+.card{padding-bottom:28px}
+.card .actions{position:static;right:auto;left:auto;bottom:auto;transform:none;margin:26px auto 0;flex-direction:row;gap:12px;order:5}
+.card .actions button{width:46px;height:46px;font-size:1.15rem}
+.card .actions button{background:rgba(22,36,59,.85)}
+:root[data-theme="light"] .card .actions button{background:rgba(241,233,212,.9)}
+
+@media (max-width:420px){
+  .card{padding:34px 28px 28px}
+}
+/* short screens: tighter spacing so a whole prayer usually fits without scrolling */
+@media (max-height:820px){
+  .card{padding-top:24px}
+  .card .mark{width:40px;height:40px;margin-bottom:10px}
+  .card .tag{margin-bottom:10px}
+  .card .title{margin-bottom:12px}
+  .card .verse{margin-top:18px}
+  .card .actions{margin-top:18px}
+  .foot{margin-top:10px}
+  .foot b{font-size:1rem}
+}

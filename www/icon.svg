@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Quiet Prayers">
+  <rect width="512" height="512" rx="112" fill="#0f1a2b"/>
+  <ellipse cx="256" cy="150" rx="46" ry="22" fill="#e8c27a" opacity=".25"/>
+  <path d="M256 92c22 30 26 54 0 78-26-24-22-48 0-78z" fill="#e8c27a"/>
+  <rect x="236" y="176" width="40" height="150" rx="10" fill="#f4ecd8"/>
+  <path d="M120 360c40-24 92-24 136 6 44-30 96-30 136-6v40c-42-22-90-20-136 8-46-28-94-30-136-8z" fill="#e8c27a"/>
+</svg>
