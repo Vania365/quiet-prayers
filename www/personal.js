@@ -121,11 +121,21 @@
       const rest = pool.filter(function (p) { return p !== lead; });
       // a daily feed of 15: the most fitting prayers first, then lighter ones (not all grief on a hard day)
       const light = rest.slice(6).filter(function (p) { return p.c !== "grief"; });
-      return [lead].concat(rest.slice(0, 6), light.slice(0, 8)).slice(0, 15);
+      return withThanks([lead].concat(rest.slice(0, 6), light.slice(0, 8)).slice(0, 15), pool, seed);
     }
     const first = pool.filter(function (p) { return p.c === tod(); }), lead = first[seed % first.length] || pool[0];
-    return [lead].concat(pool.filter(function (p) { return p !== lead; })).slice(0, 15);
+    return withThanks([lead].concat(pool.filter(function (p) { return p !== lead; })).slice(0, 15), pool, seed);
   };
+  // one thank-you a day: the second card of "For you" is always a short prayer of thanks (a different one each day),
+  // so even a feed built around grief or worry has one quiet moment of gratitude near the top
+  function withThanks(feedList, pool, seed) {
+    const th = pool.filter(function (p) { return p.c === "thanks"; });
+    if (!th.length || feedList.length < 2) return feedList;
+    const pick = th[seed % th.length];
+    const out = feedList.filter(function (p) { return p !== pick; });
+    out.splice(1, 0, pick);
+    return out.slice(0, 15);
+  }
 
   window.payload = function (id) { const p = P[id], v = V[p.v]; return fill(p.ti, p) + "\n\n" + fill(p.x, p) + "\n\n“" + v.t + "” — " + v.ref + " (KJV)"; };
 

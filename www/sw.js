@@ -1,5 +1,5 @@
-const CACHE = "quiet-prayers-v9";
-const FILES = ["./", "./index.html", "./theme.css","./personal.js", "./people_music.js", "./share_card.js", "./quiet_mode.js","./prayers_more.js", "./prayers_lovable.js", "./prayers_365a.js", "./prayers_365b.js", "./prayers_365c.js", "./prayers_365d.js", "./nav_buttons.js", "./native_bridge.js", "./manifest.webmanifest", "./icon.svg"];
+const CACHE = "quiet-prayers-v10";
+const FILES = ["./", "./index.html", "./theme.css","./personal.js", "./people_music.js", "./share_card.js", "./quiet_mode.js","./prayers_more.js", "./prayers_lovable.js", "./prayers_365a.js", "./prayers_365b.js", "./prayers_365c.js", "./prayers_365d.js", "./prayers_thanks.js", "./nav_buttons.js", "./native_bridge.js", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)));
