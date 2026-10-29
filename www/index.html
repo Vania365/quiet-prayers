@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Quiet Prayers</title>
-<meta name="description" content="One prayer at a time. Morning, noon, evening, and for the ones you love.">
+<meta name="description" content="One prayer at a time. Morning, noon, evening, for the ones you love, and for your pets.">
 <meta name="theme-color" content="#0f1a2b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -158,13 +158,14 @@ const TABS = [
  {id:"morning",label:"Morning"},
  {id:"noon",label:"Noon"},
  {id:"evening",label:"Evening"},
- {id:"family",label:"Family & pets"},
+ {id:"family",label:"Family"},
+ {id:"pets",label:"Pets"},
  {id:"grief",label:"Grief"},
  {id:"peace",label:"Peace"},
  {id:"thanks",label:"Thanks"},
  {id:"saved",label:"♡ Saved"}
 ];
-const TAGNAME = {morning:"Morning",noon:"Noon",evening:"Evening",family:"Family & pets",grief:"Grief",peace:"Peace",thanks:"Thanks"};
+const TAGNAME = {morning:"Morning",noon:"Noon",evening:"Evening",family:"Family",pets:"Pets",grief:"Grief",peace:"Peace",thanks:"Thanks"};
 
 /* ---------- STORAGE (safe) ---------- */
 const store = {
@@ -280,6 +281,7 @@ if("serviceWorker" in navigator && location.protocol.startsWith("http")){
 <script src="prayers_365c.js"></script>
 <script src="prayers_365d.js"></script>
 <script src="prayers_thanks.js"></script>
+<script src="prayers_pets.js"></script>
 <script src="share_card.js"></script>
 <script src="nav_buttons.js"></script>
 <script src="quiet_mode.js"></script>
