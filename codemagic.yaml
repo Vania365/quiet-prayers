@@ -69,14 +69,15 @@ workflows:
       - name: Generate keystore + password file
         script: |
           PW=$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | cut -c1-20)
-          keytool -genkeypair -v -keystore pray_with_me.jks -storetype JKS -alias praywithme             -keyalg RSA -keysize 2048 -validity 10000 -storepass "$PW" -keypass "$PW"             -dname "CN=Pray with Me, O=Pray with Me, C=IL"
-          printf 'Pray with Me - Android signing key (KEEP SAFE, never share)
-keystore file: pray_with_me.jks
-key alias: praywithme
-keystore password: %s
-key password: %s
-Codemagic reference name: quiet_prayers_keystore
-' "$PW" "$PW" > pray_with_me_keystore_PASSWORD.txt
+          keytool -genkeypair -v -keystore pray_with_me.jks -storetype JKS -alias praywithme -keyalg RSA -keysize 2048 -validity 10000 -storepass "$PW" -keypass "$PW" -dname "CN=Pray with Me, O=Pray with Me, C=IL"
+          {
+            echo "Pray with Me - Android signing key (KEEP SAFE, never share)"
+            echo "keystore file: pray_with_me.jks"
+            echo "key alias: praywithme"
+            echo "keystore password: $PW"
+            echo "key password: $PW"
+            echo "Codemagic reference name: quiet_prayers_keystore"
+          } > pray_with_me_keystore_PASSWORD.txt
           keytool -list -v -keystore pray_with_me.jks -storepass "$PW" | grep -E "Alias|Valid|SHA256" || true
     artifacts:
       - pray_with_me.jks
