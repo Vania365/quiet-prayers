@@ -1,4 +1,4 @@
-# Quiet Prayers: בנייה בענן (GitHub + Codemagic) – צעד אחר צעד
+# Pray with Me: בנייה בענן (GitHub + Codemagic) – צעד אחר צעד
 
 הכול מוכן בתיקייה הזו (`quiet_prayers_native`): יש כבר `.gitignore`, `codemagic.yaml`,
 תיקיית `docs` עם מדיניות הפרטיות ודף התמיכה, וחתימת release ב-Gradle שקוראת את המפתח מ-Codemagic.

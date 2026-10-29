@@ -1,7 +1,7 @@
 {
   "name": "quiet-prayers-native",
   "version": "1.0.0",
-  "description": "Quiet Prayers: Capacitor wrapper for the web app in ../quiet_prayers_app",
+  "description": "Pray with Me: Capacitor wrapper for the web app in ../quiet_prayers_app",
   "main": "index.js",
   "scripts": {
     "web": "node scripts/copy-www.js",

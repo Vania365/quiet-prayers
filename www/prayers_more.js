@@ -1,4 +1,4 @@
-/* Quiet Prayers: 42 more original prayers (total 100). Appended at the end so saved ids stay stable. */
+/* Pray with Me: 42 more original prayers (total 100). Appended at the end so saved ids stay stable. */
 (function () {
   "use strict";
   const ALL_LOST = ["lost_spouse", "lost_child", "lost_parent", "lost_friend"];

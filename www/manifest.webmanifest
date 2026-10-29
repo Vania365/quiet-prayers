@@ -1,6 +1,6 @@
 {
-  "name": "Quiet Prayers",
-  "short_name": "Quiet Prayers",
+  "name": "Pray with Me",
+  "short_name": "Pray with Me",
   "description": "One prayer at a time. Morning, noon, evening, and for the ones you love.",
   "start_url": "./index.html",
   "scope": "./",

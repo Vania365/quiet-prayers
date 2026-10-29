@@ -1,4 +1,4 @@
-/* Quiet Prayers: 42 more prayers (total 142).
+/* Pray with Me: 42 more prayers (total 142).
    Drafted by the Lovable assistant for the owner's own comparison project, then edited here:
    names turned into {lost}, living-person and pet names made generic, duplicate titles renamed,
    verses are King James Version (public domain). Appended at the end so saved ids stay stable. */

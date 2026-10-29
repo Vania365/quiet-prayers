@@ -1,4 +1,4 @@
-/* Quiet Prayers: "Share as picture" card (drawn on a canvas, nothing leaves the device until the user shares). */
+/* Pray with Me: "Share as picture" card (drawn on a canvas, nothing leaves the device until the user shares). */
 (function () {
   "use strict";
   const W = 1080, H = 1350;
@@ -61,7 +61,7 @@
     ctx.font = "30px Georgia, serif"; ctx.fillText(ref, W / 2, vy + vl.length * 44 + 14);
 
     // footer
-    ctx.fillStyle = "#e8c27a"; ctx.font = "bold 36px Georgia, serif"; ctx.fillText("Quiet Prayers", W / 2, H - 120);
+    ctx.fillStyle = "#e8c27a"; ctx.font = "bold 36px Georgia, serif"; ctx.fillText("Pray with Me", W / 2, H - 120);
     ctx.fillStyle = "#a9b2c3"; ctx.font = "28px Georgia, serif";
     const where = /^https?:/.test(location.protocol) && location.hostname !== "localhost" ? location.host : "One prayer at a time";
     ctx.fillText(where, W / 2, H - 76);
@@ -77,7 +77,7 @@
       const blob = await makeCard(id); if (!blob) { toast("Could not make the picture"); return; }
       const file = new File([blob], "quiet-prayer.png", { type: "image/png" });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try { await navigator.share({ files: [file], title: "Quiet Prayers" }); } catch (_) {}
+        try { await navigator.share({ files: [file], title: "Pray with Me" }); } catch (_) {}
       } else {
         const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "quiet-prayer.png"; document.body.appendChild(a); a.click(); a.remove();
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000); toast("Picture saved");

@@ -1,4 +1,4 @@
-/* Quiet Prayers: 39 more original prayers (peace: money, caregiving, faith, gratitude, the wider world, retirement, simple peace). Appended at the end so saved ids stay stable. */
+/* Pray with Me: 39 more original prayers (peace: money, caregiving, faith, gratitude, the wider world, retirement, simple peace). Appended at the end so saved ids stay stable. */
 (function () {
   "use strict";
   Object.assign(V, {

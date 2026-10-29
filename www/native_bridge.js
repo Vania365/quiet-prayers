@@ -1,4 +1,4 @@
-/* Quiet Prayers: native app bridge (Capacitor). Does nothing on the plain website.
+/* Pray with Me: native app bridge (Capacitor). Does nothing on the plain website.
    1) keeps a safe copy of the user's data in native storage (browser storage inside apps can be purged)
    2) daily reminder (local notification, no server)
    3) status bar colour */
@@ -54,7 +54,7 @@
       const parts = String(rem.time || "08:00").split(":"), hour = parseInt(parts[0], 10) || 8, minute = parseInt(parts[1], 10) || 0;
       const pr = store.get("profile", null), name = pr && pr.name ? pr.name + ", your" : "Your";
       await LN.schedule({ notifications: [{
-        id: REM_ID, title: "Quiet Prayers",
+        id: REM_ID, title: "Pray with Me",
         body: name + " quiet moment is ready. One prayer, just for today.",
         schedule: { on: { hour: hour, minute: minute }, allowWhileIdle: true }
       }] });

@@ -1,4 +1,4 @@
-/* Quiet Prayers: 70 more original prayers (39 morning + 31 noon). Appended at the end so saved ids stay stable. */
+/* Pray with Me: 70 more original prayers (39 morning + 31 noon). Appended at the end so saved ids stay stable. */
 (function () {
   "use strict";
   Object.assign(V, {

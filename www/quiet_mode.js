@@ -1,4 +1,4 @@
-/* Quiet Prayers: "Before you begin" screen, Quiet mode (no distractions, screen stays on), and a gentle note in the grief tab. */
+/* Pray with Me: "Before you begin" screen, Quiet mode (no distractions, screen stays on), and a gentle note in the grief tab. */
 (function () {
   "use strict";
 

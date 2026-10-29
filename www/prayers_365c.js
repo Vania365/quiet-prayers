@@ -1,4 +1,4 @@
-/* Quiet Prayers: 52 more original prayers (family, pets, caregiving, and peace for anxious, lonely, unwell and sleepless nights). Appended at the end so saved ids stay stable. */
+/* Pray with Me: 52 more original prayers (family, pets, caregiving, and peace for anxious, lonely, unwell and sleepless nights). Appended at the end so saved ids stay stable. */
 (function () {
   "use strict";
   Object.assign(V, {

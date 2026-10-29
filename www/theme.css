@@ -1,4 +1,4 @@
-/* Quiet Prayers: "card" look (matches the share picture): navy gradient, thin gold frame, big serif text. */
+/* Pray with Me: "card" look (matches the share picture): navy gradient, thin gold frame, big serif text. */
 :root{--page:linear-gradient(180deg,#14223a 0%,#0b1424 100%)}
 :root[data-theme="light"]{--page:linear-gradient(180deg,#fbf6ea 0%,#f1e9d4 100%)}
 html,body{background:var(--page) !important;background-attachment:fixed}

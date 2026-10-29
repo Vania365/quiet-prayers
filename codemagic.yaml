@@ -1,4 +1,4 @@
-# Quiet Prayers: cloud builds on Codemagic (https://codemagic.io)
+# Pray with Me: cloud builds on Codemagic (https://codemagic.io)
 # The web app lives in ./www (copied from ../quiet_prayers_app with `npm run web` before each commit).
 #
 # Workflows:

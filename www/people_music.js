@@ -1,4 +1,4 @@
-/* Quiet Prayers: "People I pray for" + calm generated music.
+/* Pray with Me: "People I pray for" + calm generated music.
    Loaded after personal.js. Everything stays on the device. */
 (function () {
   "use strict";

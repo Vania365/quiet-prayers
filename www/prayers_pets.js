@@ -1,4 +1,4 @@
-/* Quiet Prayers: Pets tab. 45 original prayers for dogs, cats and other animals (living, sick, old, lost),
+/* Pray with Me: Pets tab. 45 original prayers for dogs, cats and other animals (living, sick, old, lost),
    plus the pet prayers written earlier, moved under one tab. Appended at the end so saved ids stay stable. */
 (function () {
   "use strict";

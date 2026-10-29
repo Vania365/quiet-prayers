@@ -1,4 +1,4 @@
-/* Quiet Prayers: 62 more original prayers (40 evening, 22 grief). Appended at the end so saved ids stay stable. */
+/* Pray with Me: 62 more original prayers (40 evening, 22 grief). Appended at the end so saved ids stay stable. */
 (function () {
   "use strict";
   Object.assign(V, {

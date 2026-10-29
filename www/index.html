@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Quiet Prayers</title>
+<title>Pray with Me</title>
 <meta name="description" content="One prayer at a time. Morning, noon, evening, for the ones you love, and for your pets.">
 <meta name="theme-color" content="#0f1a2b">
 <link rel="manifest" href="manifest.webmanifest">
@@ -57,7 +57,7 @@ main{position:fixed;inset:0;padding-top:calc(116px + env(safe-area-inset-top));o
 <body>
 <header>
   <div class="top">
-    <span class="brand">Quiet Prayers</span>
+    <span class="brand">Pray with Me</span>
     <span>
       <span id="streak" class="small" style="margin:0 6px"></span>
       <button class="iconbtn" id="openSettings" aria-label="Settings">⚙</button>
@@ -236,7 +236,7 @@ feed.addEventListener("click",async e=>{
     try{await navigator.clipboard.writeText(payload(id));toast("Copied")}catch(_){toast("Could not copy")}
   }else if(act==="share"){
     const text=payload(id);
-    if(navigator.share){try{await navigator.share({title:"Quiet Prayers",text})}catch(_){}}
+    if(navigator.share){try{await navigator.share({title:"Pray with Me",text})}catch(_){}}
     else{try{await navigator.clipboard.writeText(text);toast("Copied to share")}catch(_){toast("Sharing not available")}}
   }
 });

@@ -1,4 +1,4 @@
-/* Quiet Prayers: 40 more original prayers (pure thanks for being alive, the body and the day). Appended at the end so saved ids stay stable. */
+/* Pray with Me: 40 more original prayers (pure thanks for being alive, the body and the day). Appended at the end so saved ids stay stable. */
 (function () {
   "use strict";
   Object.assign(V, {

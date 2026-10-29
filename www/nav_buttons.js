@@ -1,4 +1,4 @@
-/* Quiet Prayers: "Previous / Next" buttons and a counter on each prayer (easier than swiping for many older users). */
+/* Pray with Me: "Previous / Next" buttons and a counter on each prayer (easier than swiping for many older users). */
 (function () {
   "use strict";
   const css = document.createElement("style");

@@ -1,4 +1,4 @@
-/* Quiet Prayers: personal questionnaire + personalised feed.
+/* Pray with Me: personal questionnaire + personalised feed.
    Loaded after the main script. Everything stays on the device (localStorage). */
 (function () {
   "use strict";
@@ -162,7 +162,7 @@
           '<button data-act="share" aria-label="Share">↗</button>' +
           '<button data-act="copy" aria-label="Copy">⧉</button>' +
         '</div>' + (i === 0 ? '<div class="hint">Scroll for the next prayer ↓</div>' : "") +
-        '<div class="foot"><b>Quiet Prayers</b><span>One prayer at a time</span></div></section>';
+        '<div class="foot"><b>Pray with Me</b><span>One prayer at a time</span></div></section>';
     }).join("");
     feed.scrollTop = 0;
   };

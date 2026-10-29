@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Quiet Prayers</string>
-    <string name="title_activity_main">Quiet Prayers</string>
+    <string name="app_name">Pray with Me</string>
+    <string name="title_activity_main">Pray with Me</string>
     <string name="package_name">com.quietprayers.daily</string>
     <string name="custom_url_scheme">com.quietprayers.daily</string>
 </resources>
