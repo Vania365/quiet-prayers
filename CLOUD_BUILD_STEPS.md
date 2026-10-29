@@ -17,8 +17,8 @@
 ## שלב 2 – מדיניות פרטיות בכתובת ציבורית (GitHub Pages, חינם)
 1. במאגר ב-GitHub: Settings → Pages → Build and deployment → Source: *Deploy from a branch* → Branch: `main`, Folder: `/docs` → Save.
 2. אחרי כדקה הדפים יהיו זמינים ב:
-   - מדיניות פרטיות: `https://<שם-המשתמש>.github.io/quiet-prayers/privacy_policy.html`
-   - דף תמיכה: `https://<שם-המשתמש>.github.io/quiet-prayers/`
+   - מדיניות פרטיות: `https://vania365.github.io/quiet-prayers/privacy_policy.html`
+   - דף תמיכה: `https://vania365.github.io/quiet-prayers/`
 3. הכנס את שתי הכתובות ב-`quiet_prayers_store/store_listing.md` וב-Play Console (App content → Privacy policy).
 
 ## שלב 3 – Codemagic (חינם: 500 דקות בנייה בחודש)
