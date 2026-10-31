@@ -87,6 +87,18 @@
     });
   }
   schedule(); // refresh the text (name) and keep it scheduled after updates
+  // used by the onboarding ("Shall we remind you?") and by Plus (trial reminder)
+  window.NativeReminder = { schedule: schedule };
+  window.NativeNotify = {
+    at: async function (id, when, title, body) {
+      if (!LN) return false;
+      try {
+        const perm = await LN.requestPermissions(); if (!perm || perm.display !== "granted") return false;
+        await LN.schedule({ notifications: [{ id: id, title: title, body: body, schedule: { at: new Date(when), allowWhileIdle: true } }] });
+        return true;
+      } catch (e) { return false; }
+    }
+  };
 
   /* ---------- 3) status bar ---------- */
   try {

@@ -63,7 +63,7 @@
   const AGE = ["Under 40", "40-59", "60-74", "75 or older"];
   const LOST = [["spouse","My husband or wife"],["child","My child"],["parent","My mother or father"],["friend","A friend or sibling"],["pet","A pet"]];
   const LIFE = [["family","Family I see or call"],["pet","A dog or cat"],["lonely","I mostly live on my own"]];
-  const HARD = [["grief","Missing someone I lost"],["lonely","Loneliness"],["anxiety","Worry and anxiety"],["health","My health, or a loved one's"],["sleep","Trouble sleeping"],["family","Tension in my family"],["money","Money worries"],["caregiver","Caring for someone"],["faith","Feeling far from God"],["gratitude","I just want daily peace and thanks"]];
+  const HARD = [["grief","Missing someone I lost"],["lonely","Loneliness"],["anxiety","Worry and anxiety"],["health","My health, or a loved one's"],["sleep","Trouble sleeping"],["family","Tension in my family"],["money","Money worries"],["caregiver","Caring for someone"],["pet","My dog or cat"],["faith","Feeling far from God"],["gratitude","I just want daily peace and thanks"]];
 
   const profile = function () { return store.get("profile", null); };
   // {lost} = the name of the person being remembered: the one whose relation fits the prayer, else the first name given
@@ -169,27 +169,34 @@
 
   function refreshTabs() { TABS[0].label = profile() ? "For you" : "Today"; renderTabs(); }
 
-  /* ---------- onboarding ---------- */
+  /* ---------- onboarding (v1.1: 7 screens, then the Plus screen) ---------- */
   const css = document.createElement("style");
   css.textContent =
-    "#ob{position:fixed;inset:0;z-index:30;background:var(--bg);color:var(--ink);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto}" +
-    "#ob.open{display:flex}#ob .box{width:100%;max-width:30rem}" +
+    "#ob{position:fixed;inset:0;z-index:30;background:var(--page,var(--bg));color:var(--ink);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto}" +
+    "#ob.open{display:flex}#ob .box{width:100%;max-width:30rem;margin:auto 0}" +
     "#ob h1{font-size:1.1rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 6px;font-weight:normal}" +
     "#ob h2{font-size:1.55rem;line-height:1.3;margin:6px 0 8px}" +
     "#ob .sub{color:var(--muted);margin:0 0 18px;line-height:1.5}" +
-    "#ob .dots{display:flex;gap:6px;margin:0 0 20px}#ob .dots i{width:26px;height:4px;border-radius:2px;background:var(--line)}#ob .dots i.on{background:var(--accent)}" +
-    "#ob .opts{display:flex;flex-direction:column;gap:10px}" +
+    "#ob .dots{display:flex;gap:6px;margin:0 0 20px}#ob .dots i{flex:1;height:4px;border-radius:2px;background:var(--line)}#ob .dots i.on{background:var(--accent)}" +
+    "#ob .opts{display:flex;flex-direction:column;gap:10px}#ob .opts.row{flex-direction:row;flex-wrap:wrap}#ob .opts.row .opt{flex:1 1 40%;text-align:center;min-height:46px;padding:10px 12px;font-size:.98rem}" +
     "#ob .opt{border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit;font-size:1.05rem;padding:14px 16px;border-radius:12px;text-align:left;min-height:52px;cursor:pointer}" +
     "#ob .opt[aria-pressed=true]{background:var(--accent);color:#1b1405;border-color:var(--accent);font-weight:bold}" +
-    "#ob input[type=text]{width:100%;font:inherit;font-size:1.2rem;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);margin-top:10px}" +
+    "#ob .opt small{display:block;font-size:.85rem;opacity:.8;margin-top:2px}" +
+    "#ob label.l{display:block;color:var(--muted);font-size:.95rem;margin:18px 0 6px}" +
+    "#ob input[type=text]{width:100%;font:inherit;font-size:1.2rem;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);margin-top:6px}" +
     "#ob .nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:10px}" +
     "#ob .btn{font:inherit;font-size:1.05rem;padding:13px 22px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);min-height:48px;cursor:pointer}" +
-    "#ob .btn.go{background:var(--accent);color:#1b1405;border-color:var(--accent);font-weight:bold}" +
+    "#ob .btn.go{background:var(--accent);color:#1b1405;border-color:var(--accent);font-weight:bold}#ob .btn.wide{width:100%;margin-top:12px}" +
     "#ob .link{background:none;border:0;color:var(--muted);font:inherit;text-decoration:underline;cursor:pointer;padding:12px;min-height:44px}" +
     "#ob .priv{color:var(--muted);font-size:.8rem;margin-top:18px;line-height:1.5}" +
     ".mark{width:50px;height:50px;color:var(--accent);margin:auto 0 14px;flex:0 0 auto}" +
-    "#ob .rmrow{display:flex;gap:8px;margin-top:10px}#ob .rmrow input{margin-top:0;flex:1.2;min-width:0}" +
-    "#ob select{font:inherit;font-size:1.05rem;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);flex:1;min-width:0}" +
+    "#ob .rmrow{display:flex;gap:8px;align-items:center;margin-top:8px}#ob .rmrow span{flex:0 0 40%;color:var(--muted);font-size:.95rem}#ob .rmrow input{margin-top:0;flex:1;min-width:0}" +
+    "#ob .note{font-size:1.15rem;line-height:1.6;margin:0 0 14px}#ob .note b{color:var(--accent)}#ob audio{width:100%;margin:6px 0 12px}" +
+    "#ob .chk{list-style:none;padding:0;margin:0 0 10px}#ob .chk li{display:flex;gap:12px;align-items:center;padding:10px 0;color:var(--muted);font-size:1.05rem;transition:color .3s}" +
+    "#ob .chk li i{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:.9rem;flex:0 0 auto}" +
+    "#ob .chk li.on{color:var(--ink)}#ob .chk li.on i{background:var(--accent);border-color:var(--accent);color:#1b1405}" +
+    "#ob .bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:4px 0 22px}#ob .bar b{display:block;height:100%;width:0;background:var(--accent);transition:width .6s ease}" +
+    "#ob .ready{display:none}#ob.done .ready{display:block}#ob.done .busy{display:none}" +
     ".prof button{font:inherit;border:1px solid var(--line);background:var(--bg2);color:var(--ink);padding:10px 14px;border-radius:10px;min-height:44px;cursor:pointer;margin:4px 6px 4px 0}";
   document.head.appendChild(css);
 
@@ -197,59 +204,107 @@
   ob.id = "ob"; ob.setAttribute("role", "dialog"); ob.setAttribute("aria-modal", "true"); ob.setAttribute("aria-label", "Let us get to know you");
   document.body.appendChild(ob);
 
-  const STEPS = ["name", "age", "lost", "remember", "life", "hard"];
-  const REL = [["spouse", "My husband or wife"], ["child", "My child"], ["parent", "My mother or father"], ["friend", "A friend or sibling"], ["pet", "A pet"], ["other", "Someone else"]];
-  let step = 0, draft = null;
+  const STEPS = ["name", "need", "lost", "when", "notify", "arthur", "build"];
+  const WHEN = [["morning", "In the morning", "A prayer before the day begins"], ["evening", "In the evening", "A prayer before sleep"], ["any", "Whenever I find a quiet moment", "No set time"]];
+  const TIME = { morning: "08:00", evening: "20:00", any: "20:00" };
+  const HARDNAME = {}; HARD.forEach(function (o) { HARDNAME[o[0]] = o[1]; });
+  let step = 0, draft = null, editing = false, buildTimer = null;
 
   function newDraft() {
     const p = profile();
-    const d = p ? JSON.parse(JSON.stringify(p)) : { name: "", age: "", lost: [], lostName: "", life: [], struggles: [], remember: [] };
-    d.rm = (d.remember || []).map(function (r) { return { name: r.name, rel: r.rel }; });
+    const d = p ? JSON.parse(JSON.stringify(p)) : { name: "", age: "", lost: [], lostName: "", life: [], struggles: [], remember: [], when: "", remind: null };
+    d.names = {};
+    (d.remember || []).forEach(function (r) { if (r.name && !d.names[r.rel]) d.names[r.rel] = r.name; });
+    if (d.life && d.life.indexOf("pet") >= 0 && d.struggles.indexOf("pet") < 0 && d.struggles.length < 3) d.struggles.push("pet");
     return d;
   }
   function toggle(arr, v, max) { const i = arr.indexOf(v); if (i >= 0) arr.splice(i, 1); else if (!max || arr.length < max) arr.push(v); }
+  function fmtTime(t) { const p = String(t || "20:00").split(":"), h = parseInt(p[0], 10), m = p[1] || "00"; return (h % 12 || 12) + ":" + m + (h < 12 ? " am" : " pm"); }
+  function remindTime() { return TIME[draft.when] || "20:00"; }
 
   function drawStep() {
     const id = STEPS[step], d = draft;
     const dots = '<div class="dots">' + STEPS.map(function (_, i) { return '<i class="' + (i <= step ? "on" : "") + '"></i>'; }).join("") + '</div>';
-    let q = "", sub = "", body = "";
+    let q = "", sub = "", body = "", nav = true;
     if (id === "name") {
       q = "What should we call you?"; sub = "Your first name makes the prayers feel like they were written for you.";
-      body = '<input type="text" id="obName" autocomplete="given-name" maxlength="30" placeholder="First name (optional)" value="' + esc(d.name || "") + '">';
-    } else if (id === "age") {
-      q = "How old are you?"; sub = "We use this to set a comfortable text size.";
-      body = '<div class="opts">' + AGE.map(function (a) { return '<button class="opt" data-k="age" data-v="' + a + '" aria-pressed="' + (d.age === a) + '">' + a + '</button>'; }).join("") + '</div>';
+      body = '<input type="text" id="obName" autocomplete="given-name" maxlength="30" placeholder="First name (optional)" value="' + esc(d.name || "") + '">' +
+        '<label class="l">How old are you? We use this to set a comfortable text size.</label>' +
+        '<div class="opts row">' + AGE.map(function (a) { return '<button class="opt" data-k="age" data-v="' + a + '" aria-pressed="' + (d.age === a) + '">' + a + '</button>'; }).join("") + '</div>';
+    } else if (id === "need") {
+      q = "What do you most need prayer for right now?"; sub = "Pick up to three. Your daily prayers will be built around them.";
+      body = '<div class="opts">' + HARD.map(function (o) { return '<button class="opt" data-k="struggles" data-v="' + o[0] + '" aria-pressed="' + (d.struggles.indexOf(o[0]) >= 0) + '">' + o[1] + '</button>'; }).join("") + '</div>';
     } else if (id === "lost") {
       q = "Are you missing someone?"; sub = "Choose anyone you are grieving. You can skip this.";
+      const chosen = LOST.filter(function (o) { return d.lost.indexOf(o[0]) >= 0; }).slice(0, 3);
       body = '<div class="opts">' + LOST.map(function (o) { return '<button class="opt" data-k="lost" data-v="' + o[0] + '" aria-pressed="' + (d.lost.indexOf(o[0]) >= 0) + '">' + o[1] + '</button>'; }).join("") + '</div>' +
-        '';
-    } else if (id === "remember") {
-      q = "Would you like to remember someone by name?";
-      sub = "Add up to three names. Your prayers will speak of them by name, so you can pray quietly for them or in their memory. You can skip this.";
-      const rows = (d.rm && d.rm.length) ? d.rm : [{ name: "", rel: d.lost[0] || "other" }];
-      body = '<div id="rmRows">' + rows.map(function (r, i) {
-        return '<div class="rmrow" data-i="' + i + '"><input type="text" class="rmn" maxlength="30" placeholder="Name" aria-label="Name" value="' + esc(r.name || "") + '"><select class="rmr" aria-label="Who is this?">' +
-          REL.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (r.rel || "other") ? " selected" : "") + '>' + o[1] + '</option>'; }).join("") + '</select></div>';
-      }).join("") + '</div>' + (rows.length < 3 ? '<button class="link" id="obAdd" type="button">+ Add another name</button>' : "");
-    } else if (id === "life") {
-      q = "Who is part of your life today?"; sub = "Choose all that fit.";
-      body = '<div class="opts">' + LIFE.map(function (o) { return '<button class="opt" data-k="life" data-v="' + o[0] + '" aria-pressed="' + (d.life.indexOf(o[0]) >= 0) + '">' + o[1] + '</button>'; }).join("") + '</div>';
+        (chosen.length ? '<label class="l">Would you like your prayers to speak of them by name? (optional)</label>' +
+          chosen.map(function (o) { return '<div class="rmrow"><span>' + o[1] + '</span><input type="text" class="rmn" data-rel="' + o[0] + '" maxlength="30" placeholder="Name" aria-label="Name" value="' + esc(d.names[o[0]] || "") + '"></div>'; }).join("") : "");
+    } else if (id === "when") {
+      q = "When do you usually pray?"; sub = "We will keep your prayer ready for that time of day.";
+      body = '<div class="opts">' + WHEN.map(function (o) { return '<button class="opt" data-k="when" data-v="' + o[0] + '" aria-pressed="' + (d.when === o[0]) + '">' + o[1] + '<small>' + o[2] + '</small></button>'; }).join("") + '</div>';
+    } else if (id === "notify") {
+      nav = false;
+      q = "Shall we remind you?"; sub = "One quiet line at " + fmtTime(remindTime()) + ", nothing more. You can change the time, or turn it off, in Settings.";
+      body = '<button class="btn go wide" id="obRemind">Yes, remind me at ' + fmtTime(remindTime()) + '</button>' +
+        '<div class="nav"><button class="btn" id="obBack">Back</button><button class="link" id="obNoRemind">Not now</button></div>';
+    } else if (id === "arthur") {
+      nav = false;
+      q = "A word from Arthur";
+      body = '<p class="note">Hello' + (d.name ? ", " + esc(d.name) : "") + '. I am Arthur. I started writing these prayers for the people who wrote to me every evening: about a dog that had passed, a child who stopped calling, a house gone quiet.</p>' +
+        '<p class="note">Every prayer here was written for someone real. Tonight, it is for <b>you</b>.</p>' +
+        '<audio id="obAudio" controls preload="none" src="arthur_welcome.mp3" hidden></audio>' +
+        '<div class="nav"><button class="btn" id="obBack">Back</button><button class="btn go" id="obNext">Continue</button></div>';
     } else {
-      q = "What is hardest right now?"; sub = "Pick up to three. We will build your prayers around them.";
-      body = '<div class="opts">' + HARD.map(function (o) { return '<button class="opt" data-k="struggles" data-v="' + o[0] + '" aria-pressed="' + (d.struggles.indexOf(o[0]) >= 0) + '">' + o[1] + '</button>'; }).join("") + '</div>';
+      nav = false;
+      q = "Building your prayers" + (d.name ? ", " + esc(d.name) : "") + "…";
+      const lines = [];
+      const needs = d.struggles.filter(function (s) { return s !== "pet"; }).map(function (s) { return HARDNAME[s]; }).filter(Boolean);
+      lines.push(needs.length ? "Choosing prayers for " + needs.slice(0, 2).join(" and ").toLowerCase() : "Choosing prayers for your day");
+      const nm = Object.keys(d.names).map(function (k) { return d.names[k]; }).filter(Boolean);
+      if (nm.length) lines.push("Writing " + nm[0] + "’s name into your prayers"); else if (d.lost.length) lines.push("Adding gentle prayers for the one you miss");
+      if (d.struggles.indexOf("pet") >= 0) lines.push("Adding prayers for your dog or cat");
+      lines.push(d.remind && d.remind.on ? "Setting your " + fmtTime(d.remind.time) + " reminder" : "Preparing today’s prayer");
+      lines.push("Making the text easy to read");
+      body = '<div class="busy"><div class="bar"><b id="obBar"></b></div><ul class="chk" id="obChk">' + lines.map(function (l) { return '<li><i></i>' + esc(l) + '</li>'; }).join("") + '</ul></div>' +
+        '<div class="ready"><ul class="chk"><li class="on"><i>✓</i>A new prayer for you every day</li><li class="on"><i>✓</i>Written around what you are carrying</li><li class="on"><i>✓</i>Two quiet minutes, no noise, no ads</li></ul>' +
+        '<button class="btn go wide" id="obBegin">Begin</button></div>';
     }
-    const last = step === STEPS.length - 1;
-    ob.innerHTML = '<div class="box">' + '<h1>Let us get to know you</h1>' + dots + '<h2>' + q + '</h2><p class="sub">' + sub + '</p>' + body +
-      '<div class="nav"><span>' + (step > 0 ? '<button class="btn" id="obBack">Back</button>' : '<button class="link" id="obSkip">Skip for now</button>') + '</span>' +
-      '<button class="btn go" id="obNext">' + (last ? "Build my prayers" : "Next") + '</button></div>' +
-      '<p class="priv">Your answers stay on this device. Nothing is sent anywhere, and you can erase them any time in Settings.</p></div>';
-    const inp = ob.querySelector("input"); if (inp) inp.focus();
+    ob.classList.remove("done");
+    ob.innerHTML = '<div class="box">' + '<h1>' + (id === "build" ? "Almost there" : id === "arthur" ? "Pray with Me" : "Let us get to know you") + '</h1>' + dots + '<h2 id="obQ">' + q + '</h2>' + (sub ? '<p class="sub">' + sub + '</p>' : "") + body +
+      (nav ? '<div class="nav"><span>' + (step > 0 ? '<button class="btn" id="obBack">Back</button>' : '<button class="link" id="obSkip">Skip for now</button>') + '</span>' +
+        '<button class="btn go" id="obNext">Next</button></div>' : "") +
+      (id === "build" || id === "arthur" ? "" : '<p class="priv">Your answers stay on this device. Nothing is sent anywhere, and you can erase them any time in Settings.</p>') + '</div>';
+    const inp = ob.querySelector("input[type=text]"); if (inp && id === "name") inp.focus();
+    if (id === "arthur") {
+      const a = document.getElementById("obAudio");
+      if (a) { a.addEventListener("loadedmetadata", function () { a.hidden = false; }); a.addEventListener("error", function () { a.hidden = true; }); try { a.preload = "metadata"; a.load(); } catch (e) {} }
+    }
+    if (id === "build") runBuild();
+  }
+
+  function runBuild() {
+    clearTimeout(buildTimer);
+    const items = ob.querySelectorAll("#obChk li"), bar = document.getElementById("obBar");
+    let i = 0;
+    function tick() {
+      if (i < items.length) {
+        items[i].classList.add("on"); items[i].querySelector("i").textContent = "✓";
+        if (bar) bar.style.width = Math.round(((i + 1) / items.length) * 100) + "%";
+        i++; buildTimer = setTimeout(tick, 650);
+      } else {
+        const h = document.getElementById("obQ"); if (h) h.textContent = "Your prayers are ready" + (draft.name ? ", " + draft.name : "");
+        ob.classList.add("done");
+        const b = document.getElementById("obBegin"); if (b) b.focus();
+      }
+    }
+    buildTimer = setTimeout(tick, 350);
   }
 
   function readInputs() {
     const n = document.getElementById("obName"); if (n) draft.name = n.value.trim();
-    const rows = document.querySelectorAll("#ob .rmrow");
-    if (rows.length) draft.rm = Array.prototype.map.call(rows, function (r) { return { name: r.querySelector(".rmn").value.trim(), rel: r.querySelector(".rmr").value }; });
+    const rows = ob.querySelectorAll("#ob .rmn");
+    if (rows.length) Array.prototype.forEach.call(rows, function (r) { draft.names[r.dataset.rel] = r.value.trim(); });
   }
 
   ob.addEventListener("click", function (e) {
@@ -257,29 +312,49 @@
     if (opt) {
       readInputs();
       const k = opt.dataset.k, v = opt.dataset.v;
-      if (k === "age") draft.age = v; else toggle(draft[k], v, k === "struggles" ? 3 : 0);
+      if (k === "age" || k === "when") draft[k] = v; else toggle(draft[k], v, k === "struggles" ? 3 : 0);
       drawStep(); return;
     }
-    if (e.target.id === "obAdd") {
-      readInputs(); if (!draft.rm) draft.rm = [];
-      if (draft.rm.length < 3) draft.rm.push({ name: "", rel: "other" });
-      drawStep(); const ins = ob.querySelectorAll(".rmn"); if (ins.length) ins[ins.length - 1].focus(); return;
-    }
-    if (e.target.id === "obBack") { readInputs(); step--; drawStep(); }
-    else if (e.target.id === "obNext") { readInputs(); if (step < STEPS.length - 1) { step++; drawStep(); } else finish(); }
-    else if (e.target.id === "obSkip") { store.set("obSkip", true); close(); }
+    const id = e.target.id;
+    if (id === "obBack") { readInputs(); step--; drawStep(); }
+    else if (id === "obNext") { readInputs(); if (step < STEPS.length - 1) { step++; drawStep(); } }
+    else if (id === "obSkip") { store.set("obSkip", true); close(false); }
+    else if (id === "obRemind") { setReminder(true); }
+    else if (id === "obNoRemind") { draft.remind = { on: false, time: remindTime() }; step++; drawStep(); }
+    else if (id === "obBegin") { finish(); }
   });
-  ob.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); document.getElementById("obNext").click(); } });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && ob.classList.contains("open")) { store.set("obSkip", true); close(); } });
+  async function setReminder(on) {
+    const b = document.getElementById("obRemind"); if (b) { b.disabled = true; b.textContent = "Setting…"; }
+    draft.remind = { on: on, time: remindTime() };
+    store.set("reminder", { on: on, time: remindTime() });
+    let ok = true;
+    try { if (window.NativeReminder) ok = await window.NativeReminder.schedule(); } catch (e) { ok = false; }
+    if (!ok) { draft.remind.on = false; store.set("reminder", { on: false, time: remindTime() }); }
+    step++; drawStep();
+  }
+  ob.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); const n = document.getElementById("obNext"); if (n) n.click(); } });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && ob.classList.contains("open") && STEPS[step] !== "build") { store.set("obSkip", true); close(false); } });
 
-  function open(edit) { draft = newDraft(); step = 0; drawStep(); ob.classList.add("open"); }
-  function close() { ob.classList.remove("open"); refreshTabs(); tab = "today"; renderTabs(); render(); if (window.QuietIntro) window.QuietIntro(false); }
+  function open(edit) { editing = !!edit; draft = newDraft(); step = 0; drawStep(); ob.classList.add("open"); }
+  function close(showPlus) {
+    clearTimeout(buildTimer);
+    ob.classList.remove("open"); refreshTabs(); tab = "today"; renderTabs(); render();
+    const intro = function () { if (window.QuietIntro) window.QuietIntro(false); };
+    if (showPlus && window.PlusPaywall && !(window.Plus && window.Plus.active())) window.PlusPaywall.open({ source: "onboarding", onClose: intro });
+    else intro();
+  }
   function finish() {
-    // names to remember: keep the filled rows, make sure the matching "lost" themes are on, and add them to My people
-    draft.remember = (draft.rm || []).filter(function (r) { return r.name; });
-    delete draft.rm;
-    draft.remember.forEach(function (r) { if (["spouse", "child", "parent", "friend", "pet"].indexOf(r.rel) >= 0 && draft.lost.indexOf(r.rel) < 0) draft.lost.push(r.rel); });
+    // names to remember: one per relation; keep any "someone else" names added earlier
+    const keep = (draft.remember || []).filter(function (r) { return r.name && r.rel === "other"; });
+    draft.remember = LOST.map(function (o) { return o[0]; }).filter(function (rel) { return draft.lost.indexOf(rel) >= 0 && draft.names[rel]; })
+      .map(function (rel) { return { name: draft.names[rel], rel: rel }; }).concat(keep);
+    delete draft.names;
     draft.lostName = draft.remember.length ? draft.remember[0].name : "";
+    // "who is part of your life" is derived from the needs screen
+    draft.life = [];
+    if (draft.struggles.indexOf("pet") >= 0) draft.life.push("pet");
+    if (draft.struggles.indexOf("family") >= 0) draft.life.push("family");
+    if (draft.struggles.indexOf("lonely") >= 0) draft.life.push("lonely");
     try {
       const ppl = store.get("people", []);
       draft.remember.forEach(function (r) {
@@ -291,8 +366,7 @@
     store.set("profile", draft);
     if (store.get("size", null) === null) store.set("size", draft.age === "75 or older" ? 1.8 : 1.45);
     applySettings();
-    ob.innerHTML = '<div class="box"><h1>Let us get to know you</h1><h2>Building your prayers' + (draft.name ? ", " + esc(draft.name) : "") + '…</h2><p class="sub">Choosing words that fit your day.</p></div>';
-    setTimeout(close, 900);
+    close(!editing);
   }
 
   /* ---------- settings hooks ---------- */
@@ -306,7 +380,7 @@
     document.getElementById("editProfile").onclick = function () { sheet.classList.remove("open"); open(true); };
     document.getElementById("eraseAll").onclick = function () {
       if (!confirm("Erase your answers, saved prayers and streak from this device?")) return;
-      ["profile", "saved", "streak", "obSkip", "size", "theme"].forEach(function (k) { try { localStorage.removeItem("" + k); } catch (e) {} });
+      ["profile", "saved", "streak", "obSkip", "size", "theme", "reminder", "introSeen"].forEach(function (k) { try { localStorage.removeItem("" + k); } catch (e) {} });
       saved = new Set(); sheet.classList.remove("open"); applySettings(); open(); toast("Erased");
     };
   }
