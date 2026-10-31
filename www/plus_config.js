@@ -5,7 +5,7 @@
       plus_monthly (subscription), plus_yearly (subscription, 7-day free trial), plus_lifetime (one-time, in-app product).
    3) Free tier: FREE_DAILY prayers in "For you" per day and FREE_PER_TAB in each category tab. */
 window.PLUS_CONFIG = {
-  REVENUECAT_ANDROID_KEY: "goog_REPLACE_ME",
+  REVENUECAT_ANDROID_KEY: "goog_rFqbyqdybplEjQATOqVpFhXsZTT",
   REVENUECAT_IOS_KEY: "appl_REPLACE_ME",
   ENTITLEMENT: "plus",
   PLANS: {
