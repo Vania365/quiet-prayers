@@ -13,6 +13,7 @@ window.PLUS_CONFIG = {
     monthly:  { id: "plus_monthly",  price: "$3.99" },
     lifetime: { id: "plus_lifetime", price: "$39.99" }
   },
+  FULL_DAYS: 3,                            // first days after install: everything open (a taste of Plus), then the free tier below
   FREE_DAILY: 3,
   FREE_PER_TAB: 2,
   FREE_TABS: ["saved", "people"],          // never gated

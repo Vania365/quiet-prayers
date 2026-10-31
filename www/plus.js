@@ -19,9 +19,19 @@
     if (q === "0") store.set("plus", { on: false });
   } catch (e) {}
   function state() { return store.get("plus", { on: false }); }
-  function active() { return !!state().on; }
+  // the first FULL_DAYS days after install everything is open, like Plus
+  const FULL_DAYS = CFG.FULL_DAYS || 0;
+  function firstOpen() { let d = store.get("firstOpen", null); if (!d) { d = new Date().toISOString().slice(0, 10); store.set("firstOpen", d); } return d; }
+  function tasteDaysLeft() {
+    if (!FULL_DAYS) return 0;
+    const start = new Date(firstOpen() + "T00:00:00"), days = Math.floor((Date.now() - start.getTime()) / 864e5);
+    return Math.max(0, FULL_DAYS - days);
+  }
+  function tasting() { return tasteDaysLeft() > 0; }
+  function active() { return !!state().on || tasting(); }
+  window.PlusTaste = { daysLeft: tasteDaysLeft, firstOpen: firstOpen };
   function setActive(on, extra) { const s = Object.assign({}, state(), extra || {}, { on: !!on }); store.set("plus", s); refresh(); }
-  window.Plus = { active: active, configured: configured, native: native };
+  window.Plus = { active: active, paid: function () { return !!state().on; }, tasting: tasting, configured: configured, native: native };
 
   /* ---------- RevenueCat ---------- */
   let offering = null; // {yearly, monthly, lifetime} -> package
@@ -112,9 +122,9 @@
     s.className = "card lock";
     s.innerHTML = (window.QuietHands || "") +
       '<div class="tag">' + (tab === "today" ? "That’s today’s free prayers" : hidden + " more in " + esc(name)) + '</div>' +
-      '<h2 class="title">' + (tab === "today" ? "Plus brings you " + hidden + " more today" : "Every " + esc(name) + " prayer, any time") + '</h2>' +
+      '<h2 class="title">' + (tab === "today" ? (FULL_DAYS ? "Your " + FULL_DAYS + " days of everything are over" : "Plus brings you " + hidden + " more today") : "Every " + esc(name) + " prayer, any time") + '</h2>' +
       '<p class="text">' + (tab === "today"
-        ? "Written around what you shared with us, a full day of prayers instead of " + FREE_DAILY + ". Try it free for 7 days."
+        ? "You can keep praying here for free, every day: " + FREE_DAILY + " prayers in For you and the first ones in each tab. Plus keeps everything open: " + (FREE_DAILY + hidden) + " prayers a day and all 450. Try it free for 7 days."
         : "Plus opens all 450 prayers in every tab, for every season of life. Try it free for 7 days.") + '</p>' +
       '<div class="lockbtns"><button type="button" class="go" data-plus="open">See Pray with Me Plus</button>' +
       (tab === "today" ? '<span>Or come back tomorrow for new prayers.</span>' : '') + '</div>' +
@@ -212,7 +222,7 @@
 
   function openPaywall(opts) {
     opts = opts || {};
-    if (active()) { toast("You already have Plus. Thank you."); return; }
+    if (state().on) { toast("You already have Plus. Thank you."); return; }
     onClose = opts.onClose || null; sel = "yearly"; working = false;
     draw(); pw.classList.remove("canclose"); pw.classList.add("open");
     pw.scrollTop = 0;
@@ -248,7 +258,8 @@
   function refresh() {
     if (!row) return;
     const s = state();
-    row.innerHTML = '<span>Pray with Me Plus</span><span class="prof">' + (s.on
+    const left = tasteDaysLeft();
+    row.innerHTML = '<span>Pray with Me Plus' + (!s.on && left ? '<br><small style="color:var(--muted)">Everything open for ' + left + ' more day' + (left === 1 ? "" : "s") + '</small>' : "") + '</span><span class="prof">' + (s.on
       ? '<span class="on">' + (s.trial ? "Free trial" : "Active") + ' ✓</span>'
       : '<button id="plusOpen" type="button">Learn more</button>' + (native ? '<button id="plusRestore" type="button">Restore</button>' : "")) + '</span>';
     if (document.getElementById("feed") && typeof render === "function" && !pw.classList.contains("open")) render();
