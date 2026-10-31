@@ -339,9 +339,11 @@
   function close(showPlus) {
     clearTimeout(buildTimer);
     ob.classList.remove("open"); refreshTabs(); tab = "today"; renderTabs(); render();
-    // No Plus screen here: people see their first prayers before anything about Plus (user decision 31.10.2026).
-    // Plus is offered only when they tap it: the card after the free prayers, "Arthur prays your name", or Settings.
-    if (window.QuietIntro) window.QuietIntro(false);
+    // Plus screen right after onboarding (user decision 31.10.2026 evening, like the big prayer apps): X after 3 s,
+    // and whoever closes it still gets the FULL_DAYS open days, then the free tier.
+    const intro = function () { if (window.QuietIntro) window.QuietIntro(false); };
+    if (showPlus && window.PlusPaywall && !(window.Plus && window.Plus.active())) window.PlusPaywall.open({ source: "onboarding", onClose: intro });
+    else intro();
   }
   function finish() {
     // names to remember: one per relation; keep any "someone else" names added earlier

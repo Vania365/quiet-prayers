@@ -1,4 +1,4 @@
-const CACHE = "pray-with-me-v14";
+const CACHE = "pray-with-me-v15";
 const FILES = ["./", "./index.html", "./theme.css","./personal.js", "./people_music.js", "./share_card.js", "./quiet_mode.js","./prayers_more.js", "./prayers_lovable.js", "./prayers_365a.js", "./prayers_365b.js", "./prayers_365c.js", "./prayers_365d.js", "./prayers_thanks.js", "./prayers_pets.js", "./nav_buttons.js", "./native_bridge.js", "./plus_config.js", "./plus.js", "./arthur_names.js", "./rating.js", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (e) => {
