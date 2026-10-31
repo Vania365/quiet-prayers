@@ -111,7 +111,7 @@
     const s = document.createElement("section");
     s.className = "card lock";
     s.innerHTML = (window.QuietHands || "") +
-      '<div class="tag">' + (tab === "today" ? "Today’s free prayers end here" : hidden + " more in " + esc(name)) + '</div>' +
+      '<div class="tag">' + (tab === "today" ? "That’s today’s free prayers" : hidden + " more in " + esc(name)) + '</div>' +
       '<h2 class="title">' + (tab === "today" ? "Plus brings you " + hidden + " more today" : "Every " + esc(name) + " prayer, any time") + '</h2>' +
       '<p class="text">' + (tab === "today"
         ? "Written around what you shared with us, a full day of prayers instead of " + FREE_DAILY + ". Try it free for 7 days."
