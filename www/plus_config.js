@@ -6,7 +6,7 @@
    3) Free tier: FREE_DAILY prayers in "For you" per day and FREE_PER_TAB in each category tab. */
 window.PLUS_CONFIG = {
   REVENUECAT_ANDROID_KEY: "goog_rFqbyqdybplEjQATOqVpFhXsZTT",
-  REVENUECAT_IOS_KEY: "appl_REPLACE_ME",
+  REVENUECAT_IOS_KEY: "appl_tzCBOvqRfhbseOMVLFyfCPoGrsL",
   ENTITLEMENT: "plus",
   PLANS: {
     yearly:   { id: "plus_yearly",   price: "$24.99", perMonth: "$2.08", trialDays: 7 },
