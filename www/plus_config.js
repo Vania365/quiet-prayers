@@ -22,7 +22,7 @@ window.PLUS_CONFIG = {
   // "Arthur prays your name": POST {name, forWhom, from, note, ts} as JSON to this URL (Google Apps Script / Form).
   // Empty = the app opens an email to SUPPORT_EMAIL instead.
   NAMES_ENDPOINT: "",
-  TERMS_URL: "https://vania365.github.io/quiet-prayers/",
+  TERMS_URL: "https://vania365.github.io/quiet-prayers/support.html",
   PRIVACY_URL: "https://vania365.github.io/quiet-prayers/privacy_policy.html",
   PLAY_URL: "https://play.google.com/store/apps/details?id=com.quietprayers.daily"
 };
