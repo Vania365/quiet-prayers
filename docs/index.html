@@ -90,8 +90,8 @@ footer a{color:inherit}
   </section>
 
   <section class="cta" id="android" hidden>
-    <h2>Coming to Android soon</h2>
-    <p>Leave your email and you will be among the first to get it, before it reaches the Play Store.</p>
+    <h2 id="waitTitle">Coming to Android soon</h2>
+    <p id="waitText">Leave your email and you will be among the first to get it, before it reaches the Play Store.</p>
     <form class="form" id="waitForm" novalidate>
       <label for="email" class="hint">Your email</label>
       <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
@@ -121,10 +121,16 @@ footer a{color:inherit}
   var FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSd9x-4mNUGG0xmrjQFV8tKKTrtkALo6UsfrjRMQGsywMzkDbQ/formResponse";
   var FIELD = "entry.359431219";
 
+  var IOS_LIVE = false; // flip to true the day the App Store listing is live
   var ua = navigator.userAgent || "";
   var isAndroid = /android/i.test(ua);
-  document.getElementById("ios").hidden = isAndroid;
-  document.getElementById("android").hidden = !isAndroid;
+  var showForm = isAndroid || !IOS_LIVE;
+  document.getElementById("ios").hidden = showForm;
+  document.getElementById("android").hidden = !showForm;
+  if (!isAndroid && !IOS_LIVE) {
+    document.getElementById("waitTitle").textContent = "Coming to the App Store this week";
+    document.getElementById("waitText").textContent = "Apple is doing the final review. Leave your email and you will get the link the day it goes live.";
+  }
 
   var form = document.getElementById("waitForm");
   var input = document.getElementById("email");
