@@ -122,8 +122,12 @@ footer a{color:inherit}
   var FIELD = "entry.359431219";
 
   var IOS_LIVE = false; // flip to true the day the App Store listing is live
+  var APP_STORE = "https://apps.apple.com/app/id6829239767";
   var ua = navigator.userAgent || "";
   var isAndroid = /android/i.test(ua);
+  var isiOS = /iPhone|iPad|iPod/i.test(ua);
+  // iPhone visitors go straight to the App Store once it is live: no page, no click.
+  if (IOS_LIVE && isiOS) { location.replace(APP_STORE); return; }
   var showForm = isAndroid || !IOS_LIVE;
   document.getElementById("ios").hidden = showForm;
   document.getElementById("android").hidden = !showForm;
