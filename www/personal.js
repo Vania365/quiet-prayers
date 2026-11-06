@@ -342,7 +342,7 @@
     // Plus screen right after onboarding (user decision 31.10.2026 evening, like the big prayer apps): X after 3 s,
     // and whoever closes it still gets the FULL_DAYS open days, then the free tier.
     const intro = function () { if (window.QuietIntro) window.QuietIntro(false); };
-    if (showPlus && window.PlusPaywall && !(window.Plus && window.Plus.active())) window.PlusPaywall.open({ source: "onboarding", onClose: intro });
+    if (showPlus && window.PlusPaywall && !(window.Plus && window.Plus.paid())) window.PlusPaywall.open({ source: "onboarding", onClose: intro });
     else intro();
   }
   function finish() {
