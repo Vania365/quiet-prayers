@@ -8,12 +8,13 @@ window.PLUS_CONFIG = {
   REVENUECAT_ANDROID_KEY: "goog_rFqbyqdybplEjQATOqVpFhXsZTT",
   REVENUECAT_IOS_KEY: "appl_tzCBOvqRfhbseOMVLFyfCPoGrsL",
   ENTITLEMENT: "plus",
+  HARD_PAYWALL: true,                      // native app: the Plus screen cannot be closed; the app opens only with the 7-day trial or a purchase
   PLANS: {
     yearly:   { id: "plus_yearly",   price: "$24.99", perMonth: "$2.08", trialDays: 7 },
     monthly:  { id: "plus_monthly",  price: "$3.99" },
     lifetime: { id: "plus_lifetime", price: "$39.99" }
   },
-  FULL_DAYS: 3,                            // first days after install: everything open (a taste of Plus), then the free tier below
+  FULL_DAYS: 0,                            // first days after install: everything open (a taste of Plus), then the free tier below
   FREE_DAILY: 3,
   FREE_PER_TAB: 2,
   FREE_TABS: ["saved", "people"],          // never gated

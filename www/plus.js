@@ -30,8 +30,10 @@
   function tasting() { return tasteDaysLeft() > 0; }
   function active() { return !!state().on || tasting(); }
   window.PlusTaste = { daysLeft: tasteDaysLeft, firstOpen: firstOpen };
-  function setActive(on, extra) { const s = Object.assign({}, state(), extra || {}, { on: !!on }); store.set("plus", s); refresh(); }
-  window.Plus = { active: active, paid: function () { return !!state().on; }, tasting: tasting, configured: configured, native: native };
+  function setActive(on, extra) { const s = Object.assign({}, state(), extra || {}, { on: !!on }); store.set("plus", s); refresh();
+    try { if (on && hard() && pw && pw.classList.contains("open")) closePaywall(); } catch (e) {} }
+  function hard() { return !!CFG.HARD_PAYWALL && configured && native; }
+  window.Plus = { active: active, paid: function () { return !!state().on; }, tasting: tasting, configured: configured, native: native, hard: hard };
 
   /* ---------- RevenueCat ---------- */
   let offering = null; // {yearly, monthly, lifetime} -> package
@@ -187,7 +189,7 @@
   function draw() {
     const pr = store.get("profile", null), trial = hasTrial(), pm = perMonth();
     const cta = sel === "yearly" ? (trial ? "Start my 7-day free trial" : "Continue with yearly") : sel === "monthly" ? "Continue with monthly" : "Buy once, keep forever";
-    pw.innerHTML = '<div class="box"><button class="x" id="pwX" aria-label="Close">✕</button>' + (window.QuietHands || "") +
+    pw.innerHTML = '<div class="box">' + (hard() ? "" : '<button class="x" id="pwX" aria-label="Close">✕</button>') + (window.QuietHands || "") +
       '<h1>Pray with Me Plus</h1>' +
       '<h2>Every prayer, every day' + (pr && pr.name ? ", " + esc(pr.name) : "") + '</h2>' +
       '<ul><li><i>✓</i>All 450 prayers, in every tab, whenever you need them</li>' +
@@ -202,7 +204,7 @@
       '</div>' +
       '<button class="go" id="pwGo"' + (working ? " disabled" : "") + '>' + (working ? "One moment…" : cta) + '</button>' +
       (sel === "yearly" && trial ? '<p class="promise">No payment today. We will send you a reminder 2 days before your trial ends.</p>' : "") +
-      '<button class="free" id="pwFree">Continue with the free version</button>' +
+      (hard() ? "" : '<button class="free" id="pwFree">Continue with the free version</button>') +
       '<p class="fine">' + fine(trial) + '</p>' +
       '<div class="links"><button type="button" id="pwRestore">Restore purchases</button><a href="' + esc(CFG.TERMS_URL || "#") + '" target="_blank" rel="noopener">Terms</a><a href="' + esc(CFG.PRIVACY_URL || "#") + '" target="_blank" rel="noopener">Privacy</a></div>' +
       '</div>';
@@ -226,7 +228,7 @@
     onClose = opts.onClose || null; sel = "yearly"; working = false;
     draw(); pw.classList.remove("canclose"); pw.classList.add("open");
     pw.scrollTop = 0;
-    clearTimeout(closeTimer); closeTimer = setTimeout(function () { pw.classList.add("canclose"); }, 3000);
+    clearTimeout(closeTimer); if (!hard()) closeTimer = setTimeout(function () { pw.classList.add("canclose"); }, 3000);
     try { const seen = store.get("pwSeen", 0); store.set("pwSeen", seen + 1); } catch (e) {}
   }
   function closePaywall() {
@@ -265,5 +267,14 @@
     if (document.getElementById("feed") && typeof render === "function" && !pw.classList.contains("open")) render();
   }
   refresh();
-  initRC();
+  function gate() {
+    try {
+      if (!hard() || state().on) return;
+      if (!(store.get("profile", null) || store.get("obSkip", false))) return;   // first run: onboarding opens the paywall when it ends
+      if (pw.classList.contains("open")) return;
+      openPaywall({ source: "gate" });
+    } catch (e) {}
+  }
+  window.PlusGate = gate;
+  initRC().then(gate, gate);
 })();
