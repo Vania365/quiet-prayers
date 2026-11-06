@@ -4,6 +4,18 @@
 (function () {
   "use strict";
   const CFG = window.PLUS_CONFIG || {};
+  // Remote config (no store review needed): a small JSON on the project site can flip the hard paywall, the trial days and two texts.
+  // Only whitelisted keys of the right type are applied; the last good copy is cached; local defaults apply when offline.
+  function applyRemote(r) {
+    if (!r || typeof r !== "object") return;
+    try {
+      if (typeof r.hard_paywall === "boolean") CFG.HARD_PAYWALL = r.hard_paywall;
+      if (typeof r.full_days === "number" && r.full_days >= 0 && r.full_days <= 30) CFG.FULL_DAYS = r.full_days;
+      if (typeof r.paywall_title === "string" && r.paywall_title.length > 0 && r.paywall_title.length < 80) CFG.PAYWALL_TITLE = r.paywall_title;
+      if (typeof r.cta_trial === "string" && r.cta_trial.length > 0 && r.cta_trial.length < 60) CFG.CTA_TRIAL = r.cta_trial;
+    } catch (e) {}
+  }
+  try { applyRemote(JSON.parse(localStorage.getItem("pwmRemoteCfg") || "null")); } catch (e) {}
   const C = window.Capacitor;
   const native = !!(C && C.isNativePlatform && C.isNativePlatform());
   const RC = native && C.Plugins ? C.Plugins.Purchases : null;
@@ -19,13 +31,13 @@
     if (q === "0") store.set("plus", { on: false });
   } catch (e) {}
   function state() { return store.get("plus", { on: false }); }
-  // the first FULL_DAYS days after install everything is open, like Plus
-  const FULL_DAYS = CFG.FULL_DAYS || 0;
+  // the first fullDays() days after install everything is open, like Plus
+  function fullDays() { return CFG.FULL_DAYS || 0; }
   function firstOpen() { let d = store.get("firstOpen", null); if (!d) { d = new Date().toISOString().slice(0, 10); store.set("firstOpen", d); } return d; }
   function tasteDaysLeft() {
-    if (!FULL_DAYS) return 0;
+    if (!fullDays()) return 0;
     const start = new Date(firstOpen() + "T00:00:00"), days = Math.floor((Date.now() - start.getTime()) / 864e5);
-    return Math.max(0, FULL_DAYS - days);
+    return Math.max(0, fullDays() - days);
   }
   function tasting() { return tasteDaysLeft() > 0; }
   function active() { return !!state().on || tasting(); }
@@ -124,7 +136,7 @@
     s.className = "card lock";
     s.innerHTML = (window.QuietHands || "") +
       '<div class="tag">' + (tab === "today" ? "That’s today’s free prayers" : hidden + " more in " + esc(name)) + '</div>' +
-      '<h2 class="title">' + (tab === "today" ? (FULL_DAYS ? "Your " + FULL_DAYS + " days of everything are over" : "Plus brings you " + hidden + " more today") : "Every " + esc(name) + " prayer, any time") + '</h2>' +
+      '<h2 class="title">' + (tab === "today" ? (fullDays() ? "Your " + fullDays() + " days of everything are over" : "Plus brings you " + hidden + " more today") : "Every " + esc(name) + " prayer, any time") + '</h2>' +
       '<p class="text">' + (tab === "today"
         ? "You can keep praying here for free, every day: " + FREE_DAILY + " prayers in For you and the first ones in each tab. Plus keeps everything open: " + (FREE_DAILY + hidden) + " prayers a day and all 450. Try it free for 7 days."
         : "Plus opens all 450 prayers in every tab, for every season of life. Try it free for 7 days.") + '</p>' +
@@ -188,10 +200,10 @@
   }
   function draw() {
     const pr = store.get("profile", null), trial = hasTrial(), pm = perMonth();
-    const cta = sel === "yearly" ? (trial ? "Start my 7-day free trial" : "Continue with yearly") : sel === "monthly" ? "Continue with monthly" : "Buy once, keep forever";
+    const cta = sel === "yearly" ? (trial ? (CFG.CTA_TRIAL || "Start my 7-day free trial") : "Continue with yearly") : sel === "monthly" ? "Continue with monthly" : "Buy once, keep forever";
     pw.innerHTML = '<div class="box">' + (hard() ? "" : '<button class="x" id="pwX" aria-label="Close">✕</button>') + (window.QuietHands || "") +
       '<h1>Pray with Me Plus</h1>' +
-      '<h2>Every prayer, every day' + (pr && pr.name ? ", " + esc(pr.name) : "") + '</h2>' +
+      '<h2>' + esc(CFG.PAYWALL_TITLE || "Every prayer, every day") + (pr && pr.name ? ", " + esc(pr.name) : "") + '</h2>' +
       '<ul><li><i>✓</i>All 450 prayers, in every tab, whenever you need them</li>' +
       '<li><i>✓</i>A full day of prayers written around what you are carrying</li>' +
       '<li><i>✓</i>Arthur prays your name, or the name of someone you love, in his evening prayer</li>' +
@@ -276,5 +288,16 @@
     } catch (e) {}
   }
   window.PlusGate = gate;
-  initRC().then(gate, gate);
+  async function loadRemote() {
+    try {
+      const url = CFG.REMOTE_URL; if (!url) return;
+      const ctl = new AbortController(); const to = setTimeout(function () { ctl.abort(); }, 4000);
+      const res = await fetch(url + "?t=" + Date.now(), { cache: "no-store", signal: ctl.signal }); clearTimeout(to);
+      if (!res.ok) return;
+      const j = await res.json(); if (!j || typeof j !== "object") return;
+      localStorage.setItem("pwmRemoteCfg", JSON.stringify(j)); applyRemote(j);
+      if (pw.classList.contains("open")) { draw(); if (!hard()) pw.classList.add("canclose"); }
+    } catch (e) {}
+  }
+  Promise.all([initRC(), loadRemote()]).then(gate, gate);
 })();

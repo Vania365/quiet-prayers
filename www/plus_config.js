@@ -8,6 +8,7 @@ window.PLUS_CONFIG = {
   REVENUECAT_ANDROID_KEY: "goog_rFqbyqdybplEjQATOqVpFhXsZTT",
   REVENUECAT_IOS_KEY: "appl_tzCBOvqRfhbseOMVLFyfCPoGrsL",
   ENTITLEMENT: "plus",
+  REMOTE_URL: "https://vania365.github.io/quiet-prayers/config.json",   // optional remote overrides (see docs/config.json)
   HARD_PAYWALL: true,                      // native app: the Plus screen cannot be closed; the app opens only with the 7-day trial or a purchase
   PLANS: {
     yearly:   { id: "plus_yearly",   price: "$24.99", perMonth: "$2.08", trialDays: 7 },
